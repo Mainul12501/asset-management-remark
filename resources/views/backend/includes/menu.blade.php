@@ -51,73 +51,30 @@
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item">
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 5H5v14h14V5zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" opacity=".3"/><path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm2 0h14v14H5V5zm2 5h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
-                        <span class="side-menu__label">Charts</span>
+                        <span class="side-menu__label">KV</span>
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
                         <li class="slide side-menu__label1">
-                            <a href="javascript:void(0);">Charts</a>
+                            <a href="javascript:void(0);">KV</a>
                         </li>
-                        <li class="slide has-sub">
-                            <a href="javascript:void(0);" class="side-menu__item">Apex Charts
-                                <i class="fe fe-chevron-right side-menu__angle"></i></a>
-                            <ul class="slide-menu child2">
-                                <li class="slide">
-                                    <a href="apex-line-charts.html" class="side-menu__item">Line Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-area-charts.html" class="side-menu__item">Area Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-column-charts.html" class="side-menu__item">Column Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-bar-charts.html" class="side-menu__item">Bar Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-mixed-charts.html" class="side-menu__item">Mixed Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-rangearea-charts.html" class="side-menu__item">Range Area Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-timeline-charts.html" class="side-menu__item">Timeline Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-candlestick-charts.html" class="side-menu__item">CandleStick
-                                        Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-boxplot-charts.html" class="side-menu__item">Boxplot Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-bubble-charts.html" class="side-menu__item">Bubble Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-scatter-charts.html" class="side-menu__item">Scatter Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-heatmap-charts.html" class="side-menu__item">Heatmap Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-treemap-charts.html" class="side-menu__item">Treemap Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-pie-charts.html" class="side-menu__item">Pie Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-radialbar-charts.html" class="side-menu__item">Radialbar Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-radar-charts.html" class="side-menu__item">Radar Charts</a>
-                                </li>
-                                <li class="slide">
-                                    <a href="apex-polararea-charts.html" class="side-menu__item">Polararea Charts</a>
-                                </li>
-                            </ul>
-                        </li>
+{{--                        <li class="slide has-sub">--}}
+{{--                            <a href="javascript:void(0);" class="side-menu__item">Apex Charts--}}
+{{--                                <i class="fe fe-chevron-right side-menu__angle"></i></a>--}}
+{{--                            <ul class="slide-menu child2">--}}
+{{--                                <li class="slide">--}}
+{{--                                    <a href="apex-line-charts.html" class="side-menu__item">Line Charts</a>--}}
+{{--                                </li>--}}
+{{--                                <li class="slide">--}}
+{{--                                    <a href="apex-area-charts.html" class="side-menu__item">Area Charts</a>--}}
+{{--                                </li>--}}
+{{--                                <li class="slide">--}}
+{{--                                    <a href="apex-column-charts.html" class="side-menu__item">Column Charts</a>--}}
+{{--                                </li>--}}
+{{--                            </ul>--}}
+{{--                        </li>--}}
                         <li class="slide">
-                            <a href="chartjs-charts.html" class="side-menu__item">Chartjs Charts</a>
+                            <a href="{{ route('brands.index') }}" class="side-menu__item">Brands</a>
                         </li>
                         <li class="slide">
                             <a href="echarts.html" class="side-menu__item">Echart Charts</a>

@@ -2,7 +2,9 @@ function sendAjaxRequest(url, method, data = {}) {
     return $.ajax({ // Return the Promise from $.ajax
         url: base_url + url,
         method: method,
-        data: data
+        data: data,
+        processData: false,
+        contentType: false,
     })
         .done(function (data) { // .done() for success
             // console.log(data.job.employer_company);

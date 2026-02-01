@@ -15,10 +15,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->withPersonalTeam()->create();
 
-        User::factory()->withPersonalTeam()->create([
-            'name' => 'Developer',
-            'email' => 'dev@email.com',
-            'password' => '123',
+//        User::factory()->withPersonalTeam()->create([
+//            'name' => 'Developer',
+//            'email' => 'dev@email.com',
+//            'password' => '123',
+//        ]);
+        $this->call([
+            BrandSeeder::class,
         ]);
     }
 }

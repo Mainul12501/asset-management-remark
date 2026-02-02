@@ -15,7 +15,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="brands-table" class="table table-bordered text-nowrap w-100">
+                            <table id="data-table" class="table table-bordered text-nowrap w-100">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -76,50 +76,69 @@
                     <h6 class="modal-title" id="brandModalLabel">Add Brand</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="brandForm" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <input type="hidden" id="brand_id" value="">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Brand Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter brand name">
-                            <div class="invalid-feedback" id="error-name"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control text-uppercase" id="code" name="code" placeholder="2-3 letter abbreviation" maxlength="3">
-                            <small class="form-text text-muted">A 2-3 letter abbreviation that sounds close to the brand name.</small>
-                            <div class="invalid-feedback" id="error-code"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"></textarea>
-                            <div class="invalid-feedback" id="error-description"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                            <select class="form-select" id="status" name="status">
-                                <option value="1">Published</option>
-                                <option value="0">Unpublished</option>
-                            </select>
-                            <div class="invalid-feedback" id="error-status"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="logo" class="form-label">Logo</label>
-                            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
-                            <div class="invalid-feedback" id="error-logo"></div>
-                            <div id="logo-preview" class="mt-2 d-none">
-                                <img src="" alt="Logo Preview" style="height: 60px; border-radius: 5px;">
+                <div id="createAppendCodehere">
+                    <form id="brandForm" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <input type="hidden" id="brand_id" value="">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Brand Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter brand name">
+                                <div class="invalid-feedback" id="error-name"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control text-uppercase" readonly id="code" name="code" placeholder="2-3 letter abbreviation" maxlength="3">
+                                <small class="form-text text-muted">A 2-3 letter abbreviation that sounds close to the brand name.</small>
+                                <div class="invalid-feedback" id="error-code"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"></textarea>
+                                <div class="invalid-feedback" id="error-description"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="logo" class="form-label">Logo</label>
+                                <input type="file" class="filepond" id="logo" name="logo" accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml, image/webp">
+                                <div class="invalid-feedback d-block" id="error-logo" style="display:none !important;"></div>
+                                <div id="logo-preview" class="mt-2 d-none">
+                                    <img src="" alt="Logo Preview" style="height: 60px; border-radius: 5px;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label d-block">Status</label>
+                                <div class="toggle-switch">
+                                    <label class="switch">
+                                        <input type="checkbox" id="status-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <span class="ms-2" id="status-label">Published</span>
+                                </div>
+                                <input type="hidden" id="status" name="status" value="1">
+                                <div class="invalid-feedback" id="error-status"></div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="btn-save">
-                            <span class="btn-text">Save</span>
-                            <span class="spinner-border spinner-border-sm d-none" id="btn-spinner"></span>
-                        </button>
-                    </div>
-                </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btn-save">
+                                <span class="btn-text">Save</span>
+                                <span class="spinner-border spinner-border-sm d-none" id="btn-spinner"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="brandEditModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="brandModalLabel">Edit Brand</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="editAppendCodehere">
+
+                </div>
             </div>
         </div>
     </div>
@@ -168,13 +187,31 @@
 @endsection
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('backend/build/assets/libs/filepond/filepond.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/build/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/build/assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.css') }}">
 <style>
     .btn-list { display: flex; gap: 4px; }
+    .toggle-switch { display: flex; align-items: center; }
+    .toggle-switch .switch { position: relative; display: inline-block; width: 44px; height: 24px; margin-bottom: 0; }
+    .toggle-switch .switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-switch .slider { position: absolute; cursor: pointer; inset: 0; background-color: #ccc; transition: .3s; }
+    .toggle-switch .slider.round { border-radius: 24px; }
+    .toggle-switch .slider.round:before { border-radius: 50%; }
+    .toggle-switch .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #fff; transition: .3s; border-radius: 50%; }
+    .toggle-switch .switch input:checked + .slider { background-color: #5b6edf; }
+    .toggle-switch .switch input:checked + .slider:before { transform: translateX(20px); }
+    .filepond--root { margin-bottom: 0; }
 </style>
 @endpush
 
 @push('scripts')
     @include('backend.includes.plugins.datatable')
+    <script src="{{ asset('backend/build/assets/libs/filepond/filepond.min.js') }}"></script>
+    <script src="{{ asset('backend/build/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}"></script>
+    <script src="{{ asset('backend/build/assets/libs/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js') }}"></script>
+    <script src="{{ asset('backend/build/assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}"></script>
+    <script src="{{ asset('backend/build/assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}"></script>
     <script>
     $(document).ready(function () {
         const brandModal = new bootstrap.Modal(document.getElementById('brandModal'));
@@ -226,8 +263,9 @@
                 $('#code').val(data.code);
                 $('#description').val(data.description);
                 $('#status').val(data.status);
+                $('#status-switch').prop('checked', data.status == 1).trigger('change');
                 if (data.logo) {
-                    $('#logo-preview').removeClass('d-none').find('img').attr('src', base_url + 'storage/' + data.logo);
+                    $('#logo-preview').removeClass('d-none').find('img').attr('src', base_url + data.logo);
                 }
                 brandModal.show();
             });
@@ -245,7 +283,7 @@
                     : '<span class="badge bg-danger-transparent">Unpublished</span>');
                 $('#view-created').text(new Date(data.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }));
                 if (data.logo) {
-                    $('#view-logo').attr('src', base_url + 'storage/' + data.logo);
+                    $('#view-logo').attr('src', base_url + data.logo);
                     $('#view-logo-container').show();
                 } else {
                     $('#view-logo-container').hide();
@@ -291,6 +329,11 @@
             const id = $('#brand_id').val();
             const url = id ? base_url + 'brands/' + id : base_url + 'brands';
             const formData = new FormData(this);
+            // Add FilePond file to formData
+            const pondFile = pond.getFile();
+            if (pondFile) {
+                formData.append('logo', pondFile.file);
+            }
             if (id) formData.append('_method', 'PUT');
 
             $('#btn-save').prop('disabled', true);
@@ -311,8 +354,12 @@
                     if (xhr.status === 422) {
                         const errors = xhr.responseJSON.errors;
                         $.each(errors, function (field, messages) {
-                            $('#' + field).addClass('is-invalid');
-                            $('#error-' + field).text(messages[0]);
+                            if (field === 'logo') {
+                                $('#error-logo').text(messages[0]).css('display', 'block');
+                            } else {
+                                $('#' + field).addClass('is-invalid');
+                                $('#error-' + field).text(messages[0]);
+                            }
                         });
                     } else {
                         showToast('Something went wrong.', 'danger');
@@ -325,30 +372,42 @@
             });
         });
 
-        // Logo preview on file select
-        $('#logo').on('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    $('#logo-preview').removeClass('d-none').find('img').attr('src', e.target.result);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                $('#logo-preview').addClass('d-none');
-            }
+        // FilePond setup
+        FilePond.registerPlugin(
+            FilePondPluginImagePreview,
+            FilePondPluginFileValidateType,
+            FilePondPluginFileValidateSize,
+            FilePondPluginImageExifOrientation
+        );
+
+        const pond = FilePond.create(document.querySelector('#logo'), {
+            labelIdle: '<i class="ri-upload-cloud-2-line" style="font-size:1.5rem;"></i><br>Drag & Drop your logo or <span class="filepond--label-action">Browse</span>',
+            acceptedFileTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'],
+            maxFileSize: '2MB',
+            imagePreviewHeight: 100,
+            stylePanelLayout: 'compact',
+            credits: false,
+        });
+
+        // Status switch toggle
+        $('#status-switch').on('change', function () {
+            const isChecked = $(this).is(':checked');
+            $('#status').val(isChecked ? '1' : '0');
+            $('#status-label').text(isChecked ? 'Published' : 'Unpublished');
         });
 
         function resetForm() {
             $('#brandForm')[0].reset();
             $('#brand_id').val('');
             $('#logo-preview').addClass('d-none');
+            pond.removeFiles();
+            $('#status-switch').prop('checked', true).trigger('change');
             clearErrors();
         }
 
         function clearErrors() {
             $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').text('');
+            $('.invalid-feedback').text('').css('display', '');
         }
 
         function showToast(message, type) {

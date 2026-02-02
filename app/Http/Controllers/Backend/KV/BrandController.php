@@ -28,10 +28,11 @@ class BrandController extends Controller
         }
     }
 
-    public function show(string $id)
+    public function show(Brand $brand /*string $id*/)
     {
-        $brand = Brand::findOrFail($id);
-        return response()->json($brand);
+        return view('backend.kv.partials.brand-show-edit', ['brand' => $brand, 'isShow' => true])->render();
+//        $brand = Brand::findOrFail($id);
+//        return response()->json($brand);
     }
 
     public function edit(string $id)

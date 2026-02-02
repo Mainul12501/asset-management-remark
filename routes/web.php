@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\CommonPages\AdminViewController;
 
 use App\Http\Controllers\Backend\KV\BrandController;
+use App\Http\Controllers\Backend\KV\CategoryController;
+use App\Http\Controllers\Backend\Asset\StoreController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +20,8 @@ Route::middleware([
 
     Route::resources([
         'brands' => BrandController::class,
+        'categories' => CategoryController::class,
+        'stores' => StoreController::class,
     ]);
 
 });

@@ -17,20 +17,10 @@
 
 <script>
     $(document).ready(function () {
-        // Generic file-export table init
-        $("#file-export").DataTable({
-            dom: "Bfrtip",
-            buttons: ["copy", "csv", "excel", "pdf", "print"],
-            language: {
-                searchPlaceholder: "Search...",
-                sSearch: ""
-            },
-            pageLength: 10,
-        });
 
         // Brands table with advanced features
-        if ($("#brands-table").length) {
-            $("#brands-table").DataTable({
+        if ($("#data-table").length) {
+            $("#data-table").DataTable({
                 dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex align-items-center gap-2"fB>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
                 buttons: [
                     { extend: "copy", className: "btn btn-sm btn-outline-primary" },

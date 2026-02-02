@@ -28,7 +28,7 @@
                 <li class="slide">
                     <a href="{{ route('dashboard') }}" class="side-menu__item">
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24" ><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 5h4v6H5zm10 8h4v6h-4zM5 17h4v2H5zM15 5h4v2h-4z" opacity=".3"/><path d="M3 13h8V3H3v10zm2-8h4v6H5V5zm8 16h8V11h-8v10zm2-8h4v6h-4v-6zM13 3v6h8V3h-8zm6 4h-4V5h4v2zM3 21h8v-6H3v6zm2-4h4v2H5v-2z"/></svg>
-                        <span class="side-menu__label">Index</span>
+                        <span class="side-menu__label">Dashboard</span>
                         <span class="badge bg-success ms-auto menu-badge">1</span>
                     </a>
                 </li>
@@ -48,9 +48,41 @@
                 <!-- End::slide -->
 
                 <!-- Start::slide -->
+                <!-- sample menu with nested sub menu -->
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item">
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 5H5v14h14V5zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" opacity=".3"/><path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2zm2 0h14v14H5V5zm2 5h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
+                        <span class="side-menu__label">Asset Management</span>
+                        <i class="fe fe-chevron-right side-menu__angle"></i>
+                    </a>
+                    <ul class="slide-menu child1">
+                        <li class="slide side-menu__label1">
+                            <a href="javascript:void(0);">Asset Management</a>
+                        </li>
+                        {{--                        <li class="slide has-sub">--}}
+                        {{--                            <a href="javascript:void(0);" class="side-menu__item">Apex Charts--}}
+                        {{--                                <i class="fe fe-chevron-right side-menu__angle"></i></a>--}}
+                        {{--                            <ul class="slide-menu child2">--}}
+                        {{--                                <li class="slide">--}}
+                        {{--                                    <a href="apex-line-charts.html" class="side-menu__item">Line Charts</a>--}}
+                        {{--                                </li>--}}
+                        {{--                                <li class="slide">--}}
+                        {{--                                    <a href="apex-area-charts.html" class="side-menu__item">Area Charts</a>--}}
+                        {{--                                </li>--}}
+                        {{--                                <li class="slide">--}}
+                        {{--                                    <a href="apex-column-charts.html" class="side-menu__item">Column Charts</a>--}}
+                        {{--                                </li>--}}
+                        {{--                            </ul>--}}
+                        {{--                        </li>--}}
+                        <li class="slide">
+                            <a href="{{ route('stores.index') }}" class="side-menu__item">Stores</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- KV menu -->
+                <li class="slide has-sub">
+                    <a href="javascript:void(0);" class="side-menu__item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-monitor side-menu__icon"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                         <span class="side-menu__label">KV</span>
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
@@ -58,26 +90,11 @@
                         <li class="slide side-menu__label1">
                             <a href="javascript:void(0);">KV</a>
                         </li>
-{{--                        <li class="slide has-sub">--}}
-{{--                            <a href="javascript:void(0);" class="side-menu__item">Apex Charts--}}
-{{--                                <i class="fe fe-chevron-right side-menu__angle"></i></a>--}}
-{{--                            <ul class="slide-menu child2">--}}
-{{--                                <li class="slide">--}}
-{{--                                    <a href="apex-line-charts.html" class="side-menu__item">Line Charts</a>--}}
-{{--                                </li>--}}
-{{--                                <li class="slide">--}}
-{{--                                    <a href="apex-area-charts.html" class="side-menu__item">Area Charts</a>--}}
-{{--                                </li>--}}
-{{--                                <li class="slide">--}}
-{{--                                    <a href="apex-column-charts.html" class="side-menu__item">Column Charts</a>--}}
-{{--                                </li>--}}
-{{--                            </ul>--}}
-{{--                        </li>--}}
                         <li class="slide">
                             <a href="{{ route('brands.index') }}" class="side-menu__item">Brands</a>
                         </li>
                         <li class="slide">
-                            <a href="echarts.html" class="side-menu__item">Echart Charts</a>
+                            <a href="{{ route('categories.index') }}" class="side-menu__item">Categories</a>
                         </li>
                     </ul>
                 </li>

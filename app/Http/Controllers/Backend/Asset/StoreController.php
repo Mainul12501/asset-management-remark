@@ -16,8 +16,8 @@ class StoreController extends Controller
 {
     public function index()
     {
-        return view('backend.asset-management.store', [
-            'stores'    => Store::with('storeManager', 'division', 'district', 'thana')->latest()->get(),
+        return view('backend.asset-management.store-theme', [
+            'stores'    => Store::with('storeManager', 'division', 'district', 'thana', 'storeLayouts')->latest()->get(),
             'users'     => User::orderBy('name')->get(),
             'divisions' => Division::orderBy('name')->get(),
         ]);

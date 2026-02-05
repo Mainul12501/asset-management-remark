@@ -28,6 +28,8 @@
 
 <!-- custom scripts -->
 <script src="{{ asset('/backend/build/assets/libs/helper/script.js') }}"></script>
+<!-- custom template scripts -->
+<script src="{{ asset('/backend/build/custom-design/script.js') }}"></script>
 
 @yield('scripts')
 @stack('scripts')

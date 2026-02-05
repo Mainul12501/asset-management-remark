@@ -32,6 +32,9 @@
 <!-- Helper css -->
 <link rel="stylesheet" href="{{ asset('/backend/build/assets/libs/helper/helper.min.css') }}">
 
+<!-- Custom Theme css -->
+<link rel="stylesheet" href="{{ asset('/backend/build/custom-design/style.css') }}" />
+
 <style>
     @media (min-width: 992px) {
         [data-nav-layout="horizontal"] .main-sidebar {

@@ -20,13 +20,11 @@ class Store extends Model
         'total_area_sqft',
         'address',
         'area',
-        'thana',
-        'district',
-        'division',
         'postal_code',
         'latitude',
         'longitude',
         'monthly_rent',
+        'per_sqr_feet_rent',
         'store_layout_img',
         'store_layout_pdf',
         'contact_persion',
@@ -35,9 +33,64 @@ class Store extends Model
         'status',
         'store_manager_id',
         'opened_date',
+        'division_id',
+        'store_code',
+        'district_id',
+        'thana_id',
     ];
 
     protected $searchableFields = ['*'];
+
+    public static function updateOrCreateStore($request, $store = null)
+    {
+
+//        if ($request->hasFile('store_layout_pdf')) {
+//            $pdfFile = $request->file('store_layout_pdf');
+//            $pdfName = 'layout-pdf-' . time() . '.' . $pdfFile->getClientOriginalExtension();
+//            $pdfPath = $pdfFile->storeAs('stores', $pdfName, 'public');
+//            $data['store_layout_pdf'] = 'storage/' . $pdfPath;
+//        }
+//        $request['store_layout_pdf']    = CustomHelper::fileUpload($request->file('store_layout_pdf'), "stores", 'store_layout', null, null, $store->store_layout_pdf ?? null);
+
+        $storeRecord = static::updateOrCreate(['id' => $store?->id], [
+            'title'               => $request->title,
+            'code'                => strtoupper($request->code),
+            'total_area_sqft'     => $request->total_area_sqft,
+            'address'             => $request->address,
+            'area'                => $request->area,
+            'postal_code'         => $request->postal_code,
+            'latitude'            => $request->latitude,
+            'longitude'           => $request->longitude,
+            'monthly_rent'        => $request->monthly_rent,
+            'per_sqr_feet_rent'        => $request->per_sqr_feet_rent,
+            'contact_persion'     => $request->contact_persion,
+            'shop_official_mobile'=> $request->shop_official_mobile,
+            'shop_official_email' => $request->shop_official_email,
+            'status'              => $request->status,
+            'store_manager_id'    => $request->store_manager_id ?: null,
+            'opened_date'         => $request->opened_date,
+            'store_code'         => $request->store_code,
+            'division_id'         => $request->division_id,
+            'district_id'         => $request->district_id,
+            'thana_id'         => $request->thana_id,
+            'store_layout_pdf'      => CustomHelper::fileUpload($request->file('store_layout_pdf'), "stores", 'store_layout', null, null, $store->store_layout_pdf ?? null),
+        ]);
+
+        // Create a StoreLayout record whenever layout pdf is uploaded
+        if ($request->hasFile('store_layout_pdf')) {
+            // Deactivate previous layouts
+            $storeRecord->storeLayouts()->update(['is_currently_active' => 0]);
+
+            StoreLayout::create([
+                'store_id'            => $storeRecord->id,
+                'layout_pdf'          => $storeRecord->store_layout_pdf,
+                'changed_at'          => now()->toDateString(),
+                'is_currently_active' => 1,
+            ]);
+        }
+
+        return $storeRecord;
+    }
 
     public function storeManager()
     {
@@ -54,51 +107,18 @@ class Store extends Model
         return $this->hasOne(StoreLayout::class)->where('is_currently_active', 1);
     }
 
-    public static function updateOrCreateStore($request, $store = null)
+    public function division()
     {
-        $data = [
-            'title'               => $request->title,
-            'code'                => strtoupper($request->code),
-            'total_area_sqft'     => $request->total_area_sqft,
-            'address'             => $request->address,
-            'area'                => $request->area,
-            'thana'               => $request->thana,
-            'district'            => $request->district,
-            'division'            => $request->division,
-            'postal_code'         => $request->postal_code,
-            'latitude'            => $request->latitude,
-            'longitude'           => $request->longitude,
-            'monthly_rent'        => $request->monthly_rent,
-            'contact_persion'     => $request->contact_persion,
-            'shop_official_mobile'=> $request->shop_official_mobile,
-            'shop_official_email' => $request->shop_official_email,
-            'status'              => $request->status,
-            'store_manager_id'    => $request->store_manager_id ?: null,
-            'opened_date'         => $request->opened_date,
-        ];
+        return $this->belongsTo(Division::class);
+    }
 
-        if ($request->hasFile('store_layout_pdf')) {
-            $pdfFile = $request->file('store_layout_pdf');
-            $pdfName = 'layout-pdf-' . time() . '.' . $pdfFile->getClientOriginalExtension();
-            $pdfPath = $pdfFile->storeAs('stores', $pdfName, 'public');
-            $data['store_layout_pdf'] = 'storage/' . $pdfPath;
-        }
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
 
-        $storeRecord = static::updateOrCreate(['id' => $store?->id], $data);
-
-        // Create a StoreLayout record whenever layout pdf is uploaded
-        if ($request->hasFile('store_layout_pdf')) {
-            // Deactivate previous layouts
-            $storeRecord->storeLayouts()->update(['is_currently_active' => 0]);
-
-            StoreLayout::create([
-                'store_id'            => $storeRecord->id,
-                'layout_pdf'          => $data['store_layout_pdf'],
-                'changed_at'          => now()->toDateString(),
-                'is_currently_active' => 1,
-            ]);
-        }
-
-        return $storeRecord;
+    public function thana()
+    {
+        return $this->belongsTo(Thana::class);
     }
 }

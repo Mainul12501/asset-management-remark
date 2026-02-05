@@ -21,21 +21,21 @@
         // Brands table with advanced features
         if ($("#data-table").length) {
             $("#data-table").DataTable({
-                dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex align-items-center gap-2"fB>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
-                buttons: [
-                    { extend: "copy", className: "btn btn-sm btn-outline-primary" },
-                    { extend: "csv", className: "btn btn-sm btn-outline-primary" },
-                    { extend: "excel", className: "btn btn-sm btn-outline-primary" },
-                    { extend: "pdf", className: "btn btn-sm btn-outline-primary" },
-                    { extend: "print", className: "btn btn-sm btn-outline-primary" }
-                ],
+                dom: '<"d-flex justify-content-between align-items-center mb-3"<"d-flex align-items-center"l><"d-flex align-items-center gap-2"f>>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                // buttons: [
+                //     { extend: "copy", className: "btn btn-sm btn-outline-primary" },
+                //     { extend: "csv", className: "btn btn-sm btn-outline-primary" },
+                //     { extend: "excel", className: "btn btn-sm btn-outline-primary" },
+                //     { extend: "pdf", className: "btn btn-sm btn-outline-primary" },
+                //     { extend: "print", className: "btn btn-sm btn-outline-primary" }
+                // ],
                 language: {
-                    searchPlaceholder: "Search brands...",
+                    searchPlaceholder: "Search data...",
                     sSearch: "",
                     lengthMenu: "Show _MENU_ entries",
-                    info: "Showing _START_ to _END_ of _TOTAL_ brands",
-                    infoEmpty: "No brands found",
-                    zeroRecords: "No matching brands found",
+                    info: "Showing _START_ to _END_ of _TOTAL_ data",
+                    infoEmpty: "No data found",
+                    zeroRecords: "No matching records found",
                     paginate: { previous: "<i class='ri-arrow-left-s-line'></i>", next: "<i class='ri-arrow-right-s-line'></i>" }
                 },
                 // responsive: true,

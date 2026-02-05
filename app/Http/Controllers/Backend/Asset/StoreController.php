@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Backend\Asset;
 
 use App\Http\Controllers\Controller;
+use App\Models\District;
+use App\Models\Division;
 use App\Models\Store;
+use App\Models\Thana;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,9 +17,28 @@ class StoreController extends Controller
     public function index()
     {
         return view('backend.asset-management.store', [
-            'stores' => Store::with('storeManager')->latest()->get(),
-            'users'  => User::orderBy('name')->get(),
+            'stores'    => Store::with('storeManager', 'division', 'district', 'thana')->latest()->get(),
+            'users'     => User::orderBy('name')->get(),
+            'divisions' => Division::orderBy('name')->get(),
         ]);
+    }
+
+    public function getDistricts($divisionId)
+    {
+        $districts = District::select('id', 'name')
+            ->where('division_id', $divisionId)
+            ->orderBy('name')
+            ->get();
+        return response()->json($districts);
+    }
+
+    public function getThanas($districtId)
+    {
+        $thanas = Thana::select('id', 'name')
+            ->where('district_id', $districtId)
+            ->orderBy('name')
+            ->get();
+        return response()->json($thanas);
     }
 
     public function store(Request $request)
@@ -35,7 +57,7 @@ class StoreController extends Controller
 
     public function show(string $id)
     {
-        $store = Store::with('storeManager', 'storeLayouts')->findOrFail($id);
+        $store = Store::with('storeManager', 'storeLayouts', 'division', 'district', 'thana')->findOrFail($id);
         return response()->json($store);
     }
 
@@ -75,16 +97,18 @@ class StoreController extends Controller
         return [
             'title'               => ['required', 'string', 'max:255', Rule::unique('stores', 'title')->ignore($ignoreId)],
             'code'                => ['required', 'string', 'min:2', 'max:3', 'alpha', Rule::unique('stores', 'code')->ignore($ignoreId)],
+            'store_code'          => 'nullable|string|max:50',
             'total_area_sqft'     => 'nullable|numeric|min:0',
             'address'             => 'nullable|string|max:1000',
             'area'                => 'nullable|string|max:255',
-            'thana'               => 'nullable|string|max:255',
-            'district'            => 'nullable|string|max:255',
-            'division'            => 'nullable|string|max:255',
+            'division_id'         => 'nullable|exists:divisions,id',
+            'district_id'         => 'nullable|exists:districts,id',
+            'thana_id'            => 'nullable|exists:thanas,id',
             'postal_code'         => 'nullable|string|max:20',
             'latitude'            => 'nullable|numeric|between:-90,90',
             'longitude'           => 'nullable|numeric|between:-180,180',
             'monthly_rent'        => 'nullable|numeric|min:0',
+            'per_sqr_feet_rent'   => 'nullable|numeric|min:0',
             'store_layout_pdf'    => 'nullable|mimes:pdf|max:10240',
             'contact_persion'     => 'nullable|string|max:255',
             'shop_official_mobile'=> 'nullable|string|max:20',

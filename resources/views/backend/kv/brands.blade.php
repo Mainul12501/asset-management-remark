@@ -8,7 +8,7 @@
             <div class="col-xl-12">
                 <div class="card custom-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <div class="card-title">Brands Management</div>
+                        <div class="card-title">Brands List</div>
                         <button type="button" class="btn btn-sm btn-primary btn-wave" id="btn-add-brand">
                             <i class="ri-add-line me-1"></i> Add Brand
                         </button>
@@ -98,7 +98,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="logo" class="form-label">Logo</label>
-                                <input type="file" class="filepond" id="logo" name="logo" accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml, image/webp">
+                                <input type="file" class="filepond logo" id="logo" name="logo" accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml, image/webp">
                                 <div class="invalid-feedback d-block" id="error-logo" style="display:none !important;"></div>
                                 <div id="logo-preview" class="mt-2 d-none">
                                     <img src="" alt="Logo Preview" style="height: 60px; border-radius: 5px;">
@@ -160,7 +160,7 @@
                         <tr><th>Code</th><td id="view-code"></td></tr>
                         <tr><th>Description</th><td id="view-description"></td></tr>
                         <tr><th>Status</th><td id="view-status"></td></tr>
-                        <tr><th>Created</th><td id="view-created"></td></tr>
+{{--                        <tr><th>Created</th><td id="view-created"></td></tr>--}}
                     </table>
                 </div>
             </div>
@@ -207,6 +207,7 @@
 
 @push('scripts')
     @include('backend.includes.plugins.datatable')
+    @include('backend.includes.plugins.toastr')
     <script src="{{ asset('backend/build/assets/libs/filepond/filepond.min.js') }}"></script>
     <script src="{{ asset('backend/build/assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}"></script>
     <script src="{{ asset('backend/build/assets/libs/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js') }}"></script>
@@ -255,22 +256,30 @@
         $(document).on('click', '.btn-edit', function () {
             resetForm();
             const id = $(this).data('id');
-            $('#brandModalLabel').text('Edit Brand');
-            $('#btn-save .btn-text').text('Update');
-            $.get(base_url + 'brands/' + id + '/edit', function (data) {
-                $('#brand_id').val(data.id);
-                $('#name').val(data.name);
-                $('#code').val(data.code);
-                $('#description').val(data.description);
-                $('#status').val(data.status);
-                $('#status-switch').prop('checked', data.status == 1).trigger('change');
-                if (data.logo) {
-                    $('#logo-preview').removeClass('d-none').find('img').attr('src', base_url + data.logo);
-                }
-                brandModal.show();
+            sendAjaxRequest(`brands/${id}/edit`, "get").then(function (response) {
+                console.log(response);
+                $('#editAppendCodehere').empty().append(response);
+                $('#brandEditModal').modal('show');
             });
-        });
-
+        })
+        // $(document).on('click', '.btn-edit', function () {
+        //     resetForm();
+        //     const id = $(this).data('id');
+        //     $('#brandModalLabel').text('Edit Brand');
+        //     $('#btn-save .btn-text').text('Update');
+        //     $.get(base_url + 'brands/' + id + '/edit', function (data) {
+        //         $('#brand_id').val(data.id);
+        //         $('#name').val(data.name);
+        //         $('#code').val(data.code);
+        //         $('#description').val(data.description);
+        //         $('#status').val(data.status);
+        //         $('#status-switch').prop('checked', data.status == 1).trigger('change');
+        //         if (data.logo) {
+        //             $('#logo-preview').removeClass('d-none').find('img').attr('src', base_url + data.logo);
+        //         }
+        //         brandModal.show();
+        //     });
+        // });
         // View Brand
         $(document).on('click', '.btn-view', function () {
             const id = $(this).data('id');
@@ -281,7 +290,7 @@
                 $('#view-status').html(data.status == 1
                     ? '<span class="badge bg-success-transparent">Published</span>'
                     : '<span class="badge bg-danger-transparent">Unpublished</span>');
-                $('#view-created').text(new Date(data.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }));
+                // $('#view-created').text(new Date(data.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }));
                 if (data.logo) {
                     $('#view-logo').attr('src', base_url + data.logo);
                     $('#view-logo-container').show();
@@ -320,6 +329,23 @@
                 }
             });
         });
+
+        // submit form -- update
+
+        $('#editBrandForm').on('submit', function (event) {
+            event.preventDefault();
+            clearErrors();
+            const formData = new FormData(this);
+            const pondFile = pond.getFile();
+            if (pondFile) {
+                formData.append('logo', pondFile.file);
+            }
+            $('.btn-save').prop('disabled', true);
+            $('.btn-spinner').removeClass('d-none');
+            sendAjaxRequest($(this).attr('action'), 'POST', formData).then(function (response) {
+                showToast(response.message, response.success == true ? 'success' : 'danger');
+            })
+        })
 
         // Submit Form (Create / Update)
         $('#brandForm').on('submit', function (e) {
@@ -380,7 +406,7 @@
             FilePondPluginImageExifOrientation
         );
 
-        const pond = FilePond.create(document.querySelector('#logo'), {
+        const pond = FilePond.create(document.querySelector('.logo'), {
             labelIdle: '<i class="ri-upload-cloud-2-line" style="font-size:1.5rem;"></i><br>Drag & Drop your logo or <span class="filepond--label-action">Browse</span>',
             acceptedFileTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'],
             maxFileSize: '2MB',

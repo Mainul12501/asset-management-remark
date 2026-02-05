@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('store_layouts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('store_id');
-            $table->text('layout_img');
+            $table->text('layout_img')->nullable();
             $table->text('layout_pdf');
-            $table->string('changed_at');
+            $table->string('changed_at')->nullable();
             $table->tinyInteger('is_currently_active')->default(0);
 
             $table->timestamps();

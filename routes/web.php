@@ -10,6 +10,50 @@ use App\Http\Controllers\Backend\Asset\StoreController;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/store-sync', function (){
+    $locationDbStores = \Illuminate\Support\Facades\DB::connection('location_db')
+        ->table('stores')
+        ->select('*')
+        ->get();
+    try {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($locationDbStores) {
+            foreach ($locationDbStores as $locationDbStore) {
+                $store = \App\Models\Store::updateOrCreate(['title' => $locationDbStore->name], [
+                    'title' => $locationDbStore->name,
+                    'total_area_sqft' => 0,
+                    'address' => $locationDbStore->location,
+//            'area' => $locationDbStore->area,
+//            'postal_code' => $locationDbStore->postal_code,
+                    'latitude' => $locationDbStore->latitude,
+                    'longitude' => $locationDbStore->longitude,
+                    'monthly_rent' => 0,
+                    'per_sqr_feet_rent' => 0,
+//            'store_layout_img' => $locationDbStore->store_layout_img,
+//            'store_layout_pdf' => $locationDbStore->store_layout_pdf,
+//            'contact_persion' => $locationDbStore->contact_persion,
+//            'shop_official_mobile' => $locationDbStore->shop_official_mobile,
+//            'shop_official_email' => $locationDbStore->shop_official_email,
+                    'status' => $locationDbStore->is_active,
+//            'store_manager_id' => $locationDbStore->store_manager_id,
+//            'opened_date' => $locationDbStore->opened_date,
+                    'division_id' => $locationDbStore->division_id,
+                    'store_code' => $locationDbStore->store_code,
+                    'district_id' => $locationDbStore->district_id,
+                    'thana_id' => $locationDbStore->thana_id,
+                ]);
+
+                $desiredCode = 'STR' . str_pad((string) $store->id, 3, '0', STR_PAD_LEFT);
+                if ($store->code !== $desiredCode) {
+                    $store->code = $desiredCode;
+                    $store->save();
+                }
+            }
+        });
+        return 'success';
+    } catch (\Throwable $th) {
+        return $th->getMessage();
+    }
+});
 
 Route::middleware([
     'auth:sanctum',
@@ -23,5 +67,9 @@ Route::middleware([
         'categories' => CategoryController::class,
         'stores' => StoreController::class,
     ]);
+
+    // Cascading dropdowns for stores
+    Route::get('get-districts/{division}', [StoreController::class, 'getDistricts'])->name('get.districts');
+    Route::get('get-thanas/{district}', [StoreController::class, 'getThanas'])->name('get.thanas');
 
 });

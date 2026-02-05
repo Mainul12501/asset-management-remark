@@ -40,23 +40,9 @@
 <link rel="modulepreload" href="{{ asset('/') }}backend/build/assets/custom-switcher-CDFJCGB8.js" />
 <script type="module" src="{{ asset('/') }}backend/build/assets/custom-switcher-CDFJCGB8.js"></script>
 <!-- APP JS-->
-<link rel="modulepreload" href="{{ asset('/') }}backend/build/assets/app-ClKBXEo6.js" />
-<script type="module" src="{{ asset('/') }}backend/build/assets/app-ClKBXEo6.js"></script>
-<!-- Center horizontal menu -->
-<script type="module">
-    if (document.documentElement.getAttribute('data-nav-layout') === 'horizontal') {
-        const menu = document.querySelector('.main-menu');
-        if (menu) {
-            const observer = new MutationObserver(() => {
-                if (menu.style.marginLeft === '0px' || menu.style.marginRight === '0px') {
-                    menu.style.marginLeft = 'auto';
-                    menu.style.marginRight = 'auto';
-                }
-            });
-            observer.observe(menu, { attributes: true, attributeFilter: ['style'] });
-            menu.style.marginLeft = 'auto';
-            menu.style.marginRight = 'auto';
-        }
-    }
-</script>
+<link rel="modulepreload" href="{{ asset('/backend/build/assets/app-ClKBXEo6.js') }}" />
+<script type="module" src="{{ asset('/backend/build/assets/app-ClKBXEo6.js') }}"></script>
+<!-- Center horizontal menu - JS files have been modified to use removeProperty instead of setting margin to 0 -->
 <!-- END SCRIPTS -->
+
+

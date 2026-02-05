@@ -1,6 +1,8 @@
-<form id="brandForm" method="post" action="{{ route('brands.update', $brand->id) }}" enctype="multipart/form-data">
+<form id="editBrandForm" method="post" action="{{ route('brands.update', $brand->id) }}" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
     <div class="modal-body">
-        <input type="hidden" id="brand_id" value="">
+{{--        <input type="hidden" id="brand_id" value="{{ $brand->id }}">--}}
         <div class="mb-3">
             <label for="name" class="form-label">Brand Name <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="editName" value="{{ $brand->name }}" name="name" placeholder="Enter brand name">
@@ -19,10 +21,10 @@
         </div>
         <div class="mb-3">
             <label for="logo" class="form-label">Logo</label>
-            <input type="file" class="filepond" id="editLogo" name="logo" accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml, image/webp">
+            <input type="file" class="filepond logo" id="editLogo" name="logo" accept="image/jpeg, image/png, image/jpg, image/gif, image/svg+xml, image/webp">
             <div class="invalid-feedback d-block" id="error-logo" style="display:none !important;"></div>
             <div id="logo-preview" class="mt-2 d-none">
-                <img src="" alt="Logo Preview" style="height: 60px; border-radius: 5px;">
+                <img src="{{ asset($brand->logo) }}" alt="Logo Preview" style="height: 60px; border-radius: 5px;">
             </div>
         </div>
         <div class="mb-3">
@@ -34,15 +36,15 @@
                 </label>
                 <span class="ms-2" id="status-label">Published</span>
             </div>
-            <input type="hidden" id="status" name="status" value="{{ $brand->status }}">
+            <input type="hidden" id="editStatus" name="status" value="{{ $brand->status }}">
             <div class="invalid-feedback" id="error-status"></div>
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-primary" id="btn-save">
+        <button type="submit" class="btn btn-primary btn-update" id="btn-save">
             <span class="btn-text">Save</span>
-            <span class="spinner-border spinner-border-sm d-none" id="btn-spinner"></span>
+            <span class="spinner-border spinner-border-sm d-none btn-spinner" id="btn-spinner"></span>
         </button>
     </div>
 </form>

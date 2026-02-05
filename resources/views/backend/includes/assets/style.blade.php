@@ -33,17 +33,25 @@
 <link rel="stylesheet" href="{{ asset('/backend/build/assets/libs/helper/helper.min.css') }}">
 
 <style>
-    [data-nav-layout="horizontal"] .main-sidebar {
-        display: flex !important;
-        justify-content: center;
-    }
-    [data-nav-layout="horizontal"] .main-menu-container {
-        display: inline-flex;
-    }
-    [data-nav-layout="horizontal"] .main-menu {
-        justify-content: center;
-        margin-left: auto !important;
-        margin-right: auto !important;
+    @media (min-width: 992px) {
+        [data-nav-layout="horizontal"] .main-sidebar {
+            display: flex !important;
+            justify-content: center !important;
+        }
+        [data-nav-layout="horizontal"] .main-sidebar .main-menu-container {
+            display: flex !important;
+            justify-content: center !important;
+            width: 100%;
+        }
+        [data-nav-layout="horizontal"] .main-sidebar .main-menu {
+            display: flex !important;
+            justify-content: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        [data-nav-layout="horizontal"] .simplebar-wrapper {
+            width: 100%;
+        }
     }
 </style>
 

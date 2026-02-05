@@ -36,7 +36,7 @@
                                         <td><span class="badge bg-primary-transparent">{{ $store->code }}</span></td>
                                         <td>
                                             @if($store->area || $store->district)
-                                                {{ $store->area }}{{ $store->area && $store->district ? ', ' : '' }}{{ $store->district }}
+                                                {{ $store->area }}{{ $store->area && $store->district ? ', ' : '' }}{{ $store->district?->name }}
                                             @else
                                                 <span class="text-muted">—</span>
                                             @endif
@@ -85,16 +85,20 @@
                         {{-- Basic Info --}}
                         <h6 class="fw-semibold text-muted mb-3"><i class="ri-store-2-line me-1"></i> Basic Information</h6>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-5 mb-3">
                                 <label for="title" class="form-label">Store Title <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="title" name="title" placeholder="Enter store title">
                                 <div class="invalid-feedback" id="error-title"></div>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control text-uppercase" readonly id="code" name="code" placeholder="Auto-generated" maxlength="3">
-                                <small class="form-text text-muted">Auto-generated from title.</small>
+                                <input type="text" class="form-control text-uppercase" readonly id="code" name="code" placeholder="Auto" maxlength="3">
                                 <div class="invalid-feedback" id="error-code"></div>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="store_code" class="form-label">Store Code</label>
+                                <input type="text" class="form-control" id="store_code" name="store_code" placeholder="e.g. S001">
+                                <div class="invalid-feedback" id="error-store_code"></div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="total_area_sqft" class="form-label">Area (sqft)</label>
@@ -103,17 +107,22 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label for="monthly_rent" class="form-label">Monthly Rent</label>
                                 <input type="number" step="0.01" class="form-control" id="monthly_rent" name="monthly_rent" placeholder="0.00">
                                 <div class="invalid-feedback" id="error-monthly_rent"></div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
+                                <label for="per_sqr_feet_rent" class="form-label">Per Sqft Rent</label>
+                                <input type="number" step="0.01" class="form-control" id="per_sqr_feet_rent" name="per_sqr_feet_rent" placeholder="0.00">
+                                <div class="invalid-feedback" id="error-per_sqr_feet_rent"></div>
+                            </div>
+                            <div class="col-md-3 mb-3">
                                 <label for="opened_date" class="form-label">Opened Date</label>
                                 <input type="date" class="form-control" id="opened_date" name="opened_date">
                                 <div class="invalid-feedback" id="error-opened_date"></div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label for="store_manager_id" class="form-label">Store Manager</label>
                                 <select class="form-select" id="store_manager_id" name="store_manager_id">
                                     <option value="">— Select Manager —</option>
@@ -127,13 +136,51 @@
 
                         <hr class="my-3">
 
-                        {{-- Map & Location --}}
-                        <h6 class="fw-semibold text-muted mb-3"><i class="ri-map-pin-line me-1"></i> Location <small class="text-primary fw-normal">(Search, click on map, or enter coordinates)</small></h6>
-                        <div class="mb-2 position-relative">
-                            <input type="text" class="form-control" id="map-search" placeholder="Search location... (e.g. Dhanmondi, Dhaka)" autocomplete="off">
-                            <div id="map-search-results" class="list-group position-absolute w-100 shadow-sm" style="z-index:1000; max-height:200px; overflow-y:auto; display:none;"></div>
+                        {{-- Location --}}
+                        <h6 class="fw-semibold text-muted mb-3"><i class="ri-map-pin-line me-1"></i> Location</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="division_id" class="form-label">Division</label>
+                                <select class="form-select" id="division_id" name="division_id">
+                                    <option value="">— Select Division —</option>
+                                    @foreach($divisions as $division)
+                                        <option value="{{ $division->id }}">{{ $division->name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback" id="error-division_id"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="district_id" class="form-label">District</label>
+                                <select class="form-select" id="district_id" name="district_id" disabled>
+                                    <option value="">— Select District —</option>
+                                </select>
+                                <div class="invalid-feedback" id="error-district_id"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="thana_id" class="form-label">Thana</label>
+                                <select class="form-select" id="thana_id" name="thana_id" disabled>
+                                    <option value="">— Select Thana —</option>
+                                </select>
+                                <div class="invalid-feedback" id="error-thana_id"></div>
+                            </div>
                         </div>
-                        <div id="map" style="height: 250px; border-radius: 8px; border: 1px solid #e9ecef;" class="mb-3"></div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="area" class="form-label">Area/Locality</label>
+                                <input type="text" class="form-control" id="area" name="area" placeholder="Area or locality name">
+                                <div class="invalid-feedback" id="error-area"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="postal_code" class="form-label">Postal Code</label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Postal Code">
+                                <div class="invalid-feedback" id="error-postal_code"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Full Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="2" placeholder="Full address"></textarea>
+                            <div class="invalid-feedback" id="error-address"></div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="latitude" class="form-label">Latitude</label>
@@ -144,40 +191,6 @@
                                 <label for="longitude" class="form-label">Longitude</label>
                                 <input type="text" class="form-control" id="longitude" name="longitude" placeholder="e.g. 90.4125">
                                 <div class="invalid-feedback" id="error-longitude"></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" rows="2" placeholder="Full address"></textarea>
-                            <div class="invalid-feedback" id="error-address"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="area" class="form-label">Area</label>
-                                <input type="text" class="form-control" id="area" name="area" placeholder="Area" readonly>
-                                <div class="invalid-feedback" id="error-area"></div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="thana" class="form-label">Thana</label>
-                                <input type="text" class="form-control" id="thana" name="thana" placeholder="Thana" readonly>
-                                <div class="invalid-feedback" id="error-thana"></div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="district" class="form-label">District</label>
-                                <input type="text" class="form-control" id="district" name="district" placeholder="District" readonly>
-                                <div class="invalid-feedback" id="error-district"></div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="division" class="form-label">Division</label>
-                                <input type="text" class="form-control" id="division" name="division" placeholder="Division" readonly>
-                                <div class="invalid-feedback" id="error-division"></div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="postal_code" class="form-label">Postal Code</label>
-                                <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Postal Code" readonly>
-                                <div class="invalid-feedback" id="error-postal_code"></div>
                             </div>
                         </div>
 
@@ -255,8 +268,10 @@
                             <table class="table table-bordered table-sm">
                                 <tr><th width="40%">Title</th><td id="view-title"></td></tr>
                                 <tr><th>Code</th><td id="view-code"></td></tr>
+                                <tr><th>Store Code</th><td id="view-store-code"></td></tr>
                                 <tr><th>Area (sqft)</th><td id="view-area-sqft"></td></tr>
                                 <tr><th>Monthly Rent</th><td id="view-rent"></td></tr>
+                                <tr><th>Per Sqft Rent</th><td id="view-per-sqft-rent"></td></tr>
                                 <tr><th>Opened Date</th><td id="view-opened"></td></tr>
                                 <tr><th>Manager</th><td id="view-manager"></td></tr>
                                 <tr><th>Status</th><td id="view-status"></td></tr>
@@ -275,15 +290,12 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <table class="table table-bordered table-sm">
-                                <tr><th width="40%">Contact Person</th><td id="view-contact"></td></tr>
+                                <tr><th width="20%">Contact Person</th><td id="view-contact"></td></tr>
                                 <tr><th>Mobile</th><td id="view-mobile"></td></tr>
                                 <tr><th>Email</th><td id="view-email"></td></tr>
                             </table>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="view-map" style="height: 180px; border-radius: 8px; border: 1px solid #e9ecef;"></div>
                         </div>
                     </div>
 
@@ -296,7 +308,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Changed At</th>
-                                        <th>Image</th>
                                         <th>PDF</th>
                                         <th>Active</th>
                                     </tr>
@@ -330,7 +341,6 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('backend/build/assets/libs/leaflet/leaflet.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/build/assets/libs/filepond/filepond.min.css') }}">
 <style>
     .btn-list { display: flex; gap: 4px; }
@@ -349,11 +359,9 @@
 
 @push('scripts')
     @include('backend.includes.plugins.datatable')
-    <script src="{{ asset('backend/build/assets/libs/leaflet/leaflet.js') }}"></script>
     <script src="{{ asset('backend/build/assets/libs/filepond/filepond.min.js') }}"></script>
     <script src="{{ asset('backend/build/assets/libs/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js') }}"></script>
     <script src="{{ asset('backend/build/assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}"></script>
-    <script src="{{ asset('backend/build/assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
     <script>
     $(document).ready(function () {
         const storeModal = new bootstrap.Modal(document.getElementById('storeModal'));
@@ -384,137 +392,36 @@
             }
         });
 
-        // --- Leaflet Map (Create/Edit) ---
-        let map, marker;
-        const defaultLat = 23.8103, defaultLng = 90.4125; // Dhaka
+        // --- Cascading Dropdowns ---
+        $('#division_id').on('change', function () {
+            const divisionId = $(this).val();
+            $('#district_id').html('<option value="">— Select District —</option>').prop('disabled', true);
+            $('#thana_id').html('<option value="">— Select Thana —</option>').prop('disabled', true);
 
-        function initMap() {
-            if (map) { map.remove(); }
-            map = L.map('map').setView([defaultLat, defaultLng], 7);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            map.on('click', function (e) {
-                setMarker(e.latlng.lat, e.latlng.lng);
-                $('#latitude').val(e.latlng.lat.toFixed(6));
-                $('#longitude').val(e.latlng.lng.toFixed(6));
-                reverseGeocode(e.latlng.lat, e.latlng.lng);
-            });
-        }
-
-        function setMarker(lat, lng) {
-            if (marker) { marker.setLatLng([lat, lng]); }
-            else { marker = L.marker([lat, lng], { draggable: true }).addTo(map); }
-            map.setView([lat, lng], 14);
-
-            marker.off('dragend').on('dragend', function (e) {
-                const pos = e.target.getLatLng();
-                $('#latitude').val(pos.lat.toFixed(6));
-                $('#longitude').val(pos.lng.toFixed(6));
-                reverseGeocode(pos.lat, pos.lng);
-            });
-        }
-
-        function removeMarker() {
-            if (marker) { map.removeLayer(marker); marker = null; }
-        }
-
-        // --- Map Search using Nominatim ---
-        let searchTimer;
-        $('#map-search').on('input', function () {
-            const query = $(this).val().trim();
-            clearTimeout(searchTimer);
-            if (query.length < 3) {
-                $('#map-search-results').hide().empty();
-                return;
-            }
-            searchTimer = setTimeout(function () {
-                $.get('https://nominatim.openstreetmap.org/search', {
-                    q: query, format: 'json', addressdetails: 1, limit: 5, 'accept-language': 'en'
-                }, function (results) {
-                    const $list = $('#map-search-results').empty();
-                    if (results.length === 0) {
-                        $list.append('<div class="list-group-item text-muted small">No results found</div>');
-                    }
-                    results.forEach(function (r) {
-                        $list.append(
-                            $('<a href="#" class="list-group-item list-group-item-action small py-2"></a>')
-                                .text(r.display_name)
-                                .data('lat', r.lat)
-                                .data('lon', r.lon)
-                                .data('address', r.address)
-                                .data('display', r.display_name)
-                        );
+            if (divisionId) {
+                $.get(base_url + 'get-districts/' + divisionId, function (districts) {
+                    let options = '<option value="">— Select District —</option>';
+                    districts.forEach(function (d) {
+                        options += `<option value="${d.id}">${d.name}</option>`;
                     });
-                    $list.show();
+                    $('#district_id').html(options).prop('disabled', false);
                 });
-            }, 400);
-        });
-
-        $(document).on('click', '#map-search-results a', function (e) {
-            e.preventDefault();
-            const lat = parseFloat($(this).data('lat'));
-            const lng = parseFloat($(this).data('lon'));
-            const a = $(this).data('address');
-
-            setMarker(lat, lng);
-            $('#latitude').val(lat.toFixed(6));
-            $('#longitude').val(lng.toFixed(6));
-            $('#address').val($(this).data('display'));
-            $('#area').val(a.suburb || a.neighbourhood || a.village || a.hamlet || '');
-            $('#thana').val(a.county || a.city_district || a.town || '');
-            $('#district').val(a.state_district || a.city || '');
-            $('#division').val(a.state || '');
-            $('#postal_code').val(a.postcode || '');
-
-            $('#map-search').val('');
-            $('#map-search-results').hide().empty();
-        });
-
-        // Hide search results when clicking outside
-        $(document).on('click', function (e) {
-            if (!$(e.target).closest('#map-search, #map-search-results').length) {
-                $('#map-search-results').hide();
             }
         });
 
-        // --- Reverse Geocode using Nominatim ---
-        let geocodeTimer;
-        function reverseGeocode(lat, lng) {
-            clearTimeout(geocodeTimer);
-            geocodeTimer = setTimeout(function () {
-                $.get('https://nominatim.openstreetmap.org/reverse', {
-                    lat: lat, lon: lng, format: 'json', addressdetails: 1, 'accept-language': 'en'
-                }, function (data) {
-                    if (data && data.address) {
-                        const a = data.address;
-                        $('#address').val(data.display_name || '');
-                        $('#area').val(a.suburb || a.neighbourhood || a.village || a.hamlet || '');
-                        $('#thana').val(a.county || a.city_district || a.town || '');
-                        $('#district').val(a.state_district || a.city || '');
-                        $('#division').val(a.state || '');
-                        $('#postal_code').val(a.postcode || '');
-                    }
-                }).fail(function () {
-                    console.warn('Reverse geocoding failed');
-                });
-            }, 400);
-        }
+        $('#district_id').on('change', function () {
+            const districtId = $(this).val();
+            $('#thana_id').html('<option value="">— Select Thana —</option>').prop('disabled', true);
 
-        // Manual lat/lng input triggers reverse geocode
-        let manualGeoTimer;
-        $('#latitude, #longitude').on('input', function () {
-            clearTimeout(manualGeoTimer);
-            manualGeoTimer = setTimeout(function () {
-                const lat = parseFloat($('#latitude').val());
-                const lng = parseFloat($('#longitude').val());
-                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-                    setMarker(lat, lng);
-                    reverseGeocode(lat, lng);
-                }
-            }, 600);
+            if (districtId) {
+                $.get(base_url + 'get-thanas/' + districtId, function (thanas) {
+                    let options = '<option value="">— Select Thana —</option>';
+                    thanas.forEach(function (t) {
+                        options += `<option value="${t.id}">${t.name}</option>`;
+                    });
+                    $('#thana_id').html(options).prop('disabled', false);
+                });
+            }
         });
 
         // --- FilePond for Layout PDF ---
@@ -543,7 +450,6 @@
             $('#storeModalLabel').text('Add Store');
             $('#btn-save .btn-text').text('Save');
             storeModal.show();
-            setTimeout(function () { initMap(); }, 300);
         });
 
         // --- Open Edit Modal ---
@@ -556,15 +462,14 @@
                 $('#store_id').val(data.id);
                 $('#title').val(data.title);
                 $('#code').val(data.code);
+                $('#store_code').val(data.store_code);
                 $('#total_area_sqft').val(data.total_area_sqft);
                 $('#monthly_rent').val(data.monthly_rent);
+                $('#per_sqr_feet_rent').val(data.per_sqr_feet_rent);
                 $('#opened_date').val(data.opened_date);
                 $('#store_manager_id').val(data.store_manager_id || '');
                 $('#address').val(data.address);
                 $('#area').val(data.area);
-                $('#thana').val(data.thana);
-                $('#district').val(data.district);
-                $('#division').val(data.division);
                 $('#postal_code').val(data.postal_code);
                 $('#latitude').val(data.latitude);
                 $('#longitude').val(data.longitude);
@@ -574,25 +479,42 @@
                 $('#status').val(data.status);
                 $('#status-switch').prop('checked', data.status == 1).trigger('change');
 
+                // Load cascading dropdowns
+                if (data.division_id) {
+                    $('#division_id').val(data.division_id);
+                    $.get(base_url + 'get-districts/' + data.division_id, function (districts) {
+                        let options = '<option value="">— Select District —</option>';
+                        districts.forEach(function (d) {
+                            options += `<option value="${d.id}" ${d.id == data.district_id ? 'selected' : ''}>${d.name}</option>`;
+                        });
+                        $('#district_id').html(options).prop('disabled', false);
+
+                        if (data.district_id) {
+                            $.get(base_url + 'get-thanas/' + data.district_id, function (thanas) {
+                                let options = '<option value="">— Select Thana —</option>';
+                                thanas.forEach(function (t) {
+                                    options += `<option value="${t.id}" ${t.id == data.thana_id ? 'selected' : ''}>${t.name}</option>`;
+                                });
+                                $('#thana_id').html(options).prop('disabled', false);
+                            });
+                        }
+                    });
+                }
+
                 storeModal.show();
-                setTimeout(function () {
-                    initMap();
-                    if (data.latitude && data.longitude) {
-                        setMarker(parseFloat(data.latitude), parseFloat(data.longitude));
-                    }
-                }, 300);
             });
         });
 
         // --- View Store ---
-        let viewMap, viewMarker;
         $(document).on('click', '.btn-view', function () {
             const id = $(this).data('id');
             $.get(base_url + 'stores/' + id, function (data) {
                 $('#view-title').text(data.title);
                 $('#view-code').text(data.code);
+                $('#view-store-code').text(data.store_code || '—');
                 $('#view-area-sqft').text(data.total_area_sqft ? data.total_area_sqft + ' sqft' : '—');
                 $('#view-rent').text(data.monthly_rent ? '৳' + parseFloat(data.monthly_rent).toLocaleString() : '—');
+                $('#view-per-sqft-rent').text(data.per_sqr_feet_rent ? '৳' + parseFloat(data.per_sqr_feet_rent).toLocaleString() : '—');
                 $('#view-opened').text(data.opened_date || '—');
                 $('#view-manager').text(data.store_manager ? data.store_manager.name : '—');
                 $('#view-status').html(data.status == 1
@@ -600,9 +522,9 @@
                     : '<span class="badge bg-danger-transparent">Inactive</span>');
                 $('#view-address').text(data.address || '—');
                 $('#view-area').text(data.area || '—');
-                $('#view-thana').text(data.thana || '—');
-                $('#view-district').text(data.district || '—');
-                $('#view-division').text(data.division || '—');
+                $('#view-thana').text(data.thana ? data.thana.name : '—');
+                $('#view-district').text(data.district ? data.district.name : '—');
+                $('#view-division').text(data.division ? data.division.name : '—');
                 $('#view-postal').text(data.postal_code || '—');
                 $('#view-coords').text(data.latitude && data.longitude ? data.latitude + ', ' + data.longitude : '—');
                 $('#view-contact').text(data.contact_persion || '—');
@@ -617,7 +539,6 @@
                         html += '<tr>';
                         html += '<td>' + (i + 1) + '</td>';
                         html += '<td>' + (layout.changed_at || '—') + '</td>';
-                        html += '<td>' + (layout.layout_img ? '<a href="' + base_url + layout.layout_img + '" target="_blank" class="btn btn-xs btn-primary-light">View</a>' : '—') + '</td>';
                         html += '<td>' + (layout.layout_pdf ? '<a href="' + base_url + layout.layout_pdf + '" target="_blank" class="btn btn-xs btn-info-light">Download</a>' : '—') + '</td>';
                         html += '<td>' + (layout.is_currently_active == 1 ? '<span class="badge bg-success-transparent">Active</span>' : '<span class="text-muted">—</span>') + '</td>';
                         html += '</tr>';
@@ -628,21 +549,6 @@
                 }
 
                 viewModalEl.show();
-
-                // View map
-                setTimeout(function () {
-                    if (viewMap) { viewMap.remove(); }
-                    viewMap = L.map('view-map').setView([defaultLat, defaultLng], 7);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 19, attribution: '&copy; OpenStreetMap'
-                    }).addTo(viewMap);
-
-                    if (data.latitude && data.longitude) {
-                        const lat = parseFloat(data.latitude), lng = parseFloat(data.longitude);
-                        viewMarker = L.marker([lat, lng]).addTo(viewMap);
-                        viewMap.setView([lat, lng], 14);
-                    }
-                }, 300);
             });
         });
 
@@ -732,11 +638,9 @@
             $('#storeForm')[0].reset();
             $('#store_id').val('');
             pdfPond.removeFiles();
-            removeMarker();
-            $('#map-search').val('');
-            $('#map-search-results').hide().empty();
             $('#status-switch').prop('checked', true).trigger('change');
-            $('#area, #thana, #district, #division, #postal_code').val('');
+            $('#district_id').html('<option value="">— Select District —</option>').prop('disabled', true);
+            $('#thana_id').html('<option value="">— Select Thana —</option>').prop('disabled', true);
             clearErrors();
         }
 

@@ -220,8 +220,8 @@
 
         <div class="alert alert-primary text-center mb-0" role="alert">
             <strong>Prototype Notice:</strong>
-            This application is open for testing and review. Some features may not work properly.
-            If you find any issue, kindly inform the developer or whatsapp (01646688970).
+            This application is currently open for testing and review. Some features may not work as expected
+            Please report any issues to the developer or contact us via WhatsApp at 01646688970.
         </div>
 
         @yield('body')

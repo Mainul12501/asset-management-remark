@@ -51,7 +51,7 @@ class AssetSeeder extends Seeder
         $baseDate = Carbon::create(2025, 1, 1, 9, 0, 0);
 
         foreach ($stores as $store) {
-            $storeAssetCount = $store->id <= 18 ? 2 : 3;
+            $storeAssetCount = $store->id <= 18 ? 4 : 5;
             $plans = $this->buildStorePlan($store->id, $storeAssetCount);
             $storeCode = strtoupper((string) ($store->code ?: sprintf('S%03d', $store->id)));
             $storeLabel = trim((string) ($store->title ?: 'Store ' . $store->id));
@@ -138,16 +138,21 @@ class AssetSeeder extends Seeder
 
     protected function buildStorePlan(int $storeId, int $assetCount): array
     {
-        $groundCodes = ['GON', 'ECD', 'CDU', 'WDR'];
+        $fixtureCodes = [
+            'LHC', 'ACG', 'NPG', 'CAC', 'SAT', 'FS1', 'FS2', 'FS3', 'CG3', 'HCG',
+            'WG2', 'WG4', 'BO2', 'BO4', 'BL2', 'BL4', 'CG2', 'FDG', 'MMM', 'GBG', 'GWS',
+        ];
         $staticCodes = ['BBD', 'BAN', 'LTB', 'WND', 'SHB', 'STD'];
         $digitalCodes = ['LED', 'LCD'];
 
         $plan = [
-            $groundCodes[($storeId - 1) % count($groundCodes)],
+            $fixtureCodes[($storeId - 1) % count($fixtureCodes)],
+            $fixtureCodes[$storeId % count($fixtureCodes)],
+            $fixtureCodes[($storeId + 1) % count($fixtureCodes)],
             $staticCodes[($storeId - 1) % count($staticCodes)],
         ];
 
-        if ($assetCount === 3) {
+        if ($assetCount >= 5) {
             $plan[] = $digitalCodes[($storeId - 1) % count($digitalCodes)];
         }
 
@@ -157,6 +162,174 @@ class AssetSeeder extends Seeder
     protected function assetTemplates(): array
     {
         return [
+            'LHC' => [
+                'name' => 'Low Height Cabinet',
+                'minimum_fee' => 4500,
+                'asset_price' => 4500,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 2,
+            ],
+            'ACG' => [
+                'name' => 'Accessories Gondola',
+                'minimum_fee' => 29000,
+                'asset_price' => 29000,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'NPG' => [
+                'name' => 'Nailpolish Gondola',
+                'minimum_fee' => 18676,
+                'asset_price' => 18676,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'CAC' => [
+                'name' => 'Cash Counter',
+                'minimum_fee' => 21475,
+                'asset_price' => 21475,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 2,
+            ],
+            'SAT' => [
+                'name' => 'Skin Analyzer Table',
+                'minimum_fee' => 5735,
+                'asset_price' => 5735,
+                'has_kv_slot' => 0,
+                'has_self' => 0,
+                'total_self' => null,
+            ],
+            'FS1' => [
+                'name' => 'FSU Type - 1',
+                'minimum_fee' => 4107,
+                'asset_price' => 4107,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 3,
+            ],
+            'FS2' => [
+                'name' => 'FSU Type - 2',
+                'minimum_fee' => 4247,
+                'asset_price' => 4247,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'FS3' => [
+                'name' => 'FSU Type - 3',
+                'minimum_fee' => 8511,
+                'asset_price' => 8511,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'CG3' => [
+                'name' => 'Center Gondola-3',
+                'minimum_fee' => 45064,
+                'asset_price' => 45064,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'HCG' => [
+                'name' => 'Home Care Gondola',
+                'minimum_fee' => 5900,
+                'asset_price' => 5900,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'WG2' => [
+                'name' => '2 Feet Wall Gondola',
+                'minimum_fee' => 15357,
+                'asset_price' => 15357,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 5,
+            ],
+            'WG4' => [
+                'name' => '4 Feet Wall Gondola',
+                'minimum_fee' => 23957,
+                'asset_price' => 23957,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 5,
+            ],
+            'BO2' => [
+                'name' => '2 Feet Bothside Open Gondola',
+                'minimum_fee' => 13146,
+                'asset_price' => 13146,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'BO4' => [
+                'name' => '4 Feet Bothside Open Gondola',
+                'minimum_fee' => 16285,
+                'asset_price' => 16285,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'BL2' => [
+                'name' => '2 Feet Bothside Open Low Height Gondola',
+                'minimum_fee' => 11584,
+                'asset_price' => 11584,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 3,
+            ],
+            'BL4' => [
+                'name' => '4 Feet Bothside Open Low Height Gondola',
+                'minimum_fee' => 14537,
+                'asset_price' => 14537,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 3,
+            ],
+            'CG2' => [
+                'name' => 'Center Gondola-2 (SSCG)',
+                'minimum_fee' => 22990,
+                'asset_price' => 22990,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'FDG' => [
+                'name' => 'Front Display Gondola',
+                'minimum_fee' => 33742,
+                'asset_price' => 33742,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 4,
+            ],
+            'MMM' => [
+                'name' => 'Makeup Mirror Module',
+                'minimum_fee' => 18018,
+                'asset_price' => 18018,
+                'has_kv_slot' => 1,
+                'has_self' => 0,
+                'total_self' => null,
+            ],
+            'GBG' => [
+                'name' => 'Gift Box Gondola',
+                'minimum_fee' => 7628,
+                'asset_price' => 7628,
+                'has_kv_slot' => 1,
+                'has_self' => 1,
+                'total_self' => 3,
+            ],
+            'GWS' => [
+                'name' => 'Gift Wrapping Stand',
+                'minimum_fee' => 5855,
+                'asset_price' => 5855,
+                'has_kv_slot' => 0,
+                'has_self' => 1,
+                'total_self' => 2,
+            ],
             'GON' => [
                 'name' => 'Gondola',
                 'minimum_fee' => 0,

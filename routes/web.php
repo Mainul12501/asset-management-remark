@@ -198,17 +198,11 @@ Route::get('/phpinfo', function () {return phpinfo();});
 Route::get('/optimize-clear', function () {return \Mainul\CustomHelperFunctions\Helpers\CustomHelper::optimizeClear();});
 
 Route::get('/has-kv', function (){
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    return \Illuminate\Support\Facades\Artisan::output();
 //    \App\Models\Asset::whereNotIn('id', [1,2])
 //        ->update(['has_kv_slot' => 1]);
 //    return \Illuminate\Support\Facades\Hash::make('@');
 //    return \Illuminate\Support\Facades\Hash::make('developer');
-    return response()->json([
-        'success'   => true,
-        'message'   => 'Response message goes here.',
-        'data'      => [
-            ['data-index-2' => 'data-index-value-2' ],
-            ['data-index-2' => 'data-index-value-2' ],
-            ['data-index-3' => 'data-index-value-3' ],
-        ],
-    ]);
+
 });

@@ -45,7 +45,7 @@
 
         {{-- ── Table Card ─────────────────────────────────────────────────────── --}}
         <div class="row">
-            <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9 mx-auto">
+            <div class="col-sm-12 col-md-11 mx-auto">
                 <div class="card custom-card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="card-title">Asset Management</div>

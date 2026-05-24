@@ -223,7 +223,7 @@ class AssetController extends Controller
         $asset = Asset::findOrFail($id);
         $oldStoreId      = $asset->store_id;
         $oldPlanogramPdf = $asset->planogram_pdf;
-
+return $asset = Asset::updateOrCreateAsset($request, $asset);
         $asset = DB::transaction(function () use ($request, $asset, $oldStoreId, $oldPlanogramPdf) {
             $asset = Asset::updateOrCreateAsset($request, $asset);
             if ($asset->store_id && $asset->store_id != $oldStoreId) {

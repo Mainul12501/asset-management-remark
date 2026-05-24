@@ -76,7 +76,7 @@ class Asset extends Model
         });
     }
 
-    public static function updateOrCreateAsset($request, $asset = null): self
+    public static function updateOrCreateAsset($request, $asset = null)
     {
         $data = $request->validated();
 
@@ -85,6 +85,13 @@ class Asset extends Model
         $data['is_common_asset'] = $request->boolean('is_common_asset') ? 1 : 0;
         $data['status']          = $request->boolean('status') ? 1 : 0;
         $data['has_self']        = $request->boolean('has_self') ? 1 : 0;
+
+        if (!self::checkCategoryKvStatus($data['asset_type_id']))
+        {
+            $data['has_kv_slot'] = 0;
+            $data['status'] = 0;
+        }
+//        $data['status'] = self::checkCategoryKvStatus($data['asset_type_id']) ? 1 : 0;
 
 //        if ($data['is_common_asset']) {
 //            $data['store_id'] = null;
@@ -134,6 +141,16 @@ class Asset extends Model
         }
 
         return (string) $nextCode;
+    }
+
+    public static function checkCategoryKvStatus($categoryId)
+    {
+        $existCategory = AssetType::find($categoryId);
+        if (!$existCategory)
+            return false;
+        if ($existCategory->has_kv_space == 1)
+            return true;
+        return false;
     }
 
     public function assetType()

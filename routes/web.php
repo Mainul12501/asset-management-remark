@@ -25,6 +25,9 @@ use App\Http\Controllers\Admin\UserStoreAssignmentController;
 use App\Http\Controllers\Backend\KV\KvInstallationController;
 
 use App\Http\Controllers\Backend\Asset\ImportExport\AssetImportController;
+use App\Http\Controllers\Backend\Billing\BillingController;
+use App\Http\Controllers\Backend\Billing\BillDisputeController;
+use App\Http\Controllers\Backend\Billing\BrandBillDisputeController;
 
 Route::get('/', function () {
     if (auth()->check())
@@ -41,10 +44,11 @@ Route::middleware([
     'auth.acl',
 ])->group(function () {
     Route::get('/dashboard', [AdminViewController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/dashboard-gpt', [AdminViewController::class, 'dashboardGpt'])->name('admin.dashboard-gpt');
+//    Route::get('/dashboard-gpt', [AdminViewController::class, 'dashboardGpt'])->name('admin.dashboard-gpt');
     Route::get('/admin/activity-log', [AdminViewController::class, 'activityLog'])->name('admin.activity-logs');
 
     Route::get('stores/json-list', [StoreController::class, 'jsonList'])->name('stores.json-list');
+    Route::post('stores/export', [StoreController::class, 'export'])->name('stores.export');
     Route::get('stores/layout-list', [StoreController::class, 'layoutStores'])->name('stores.layout-list');
     Route::post('stores/{store}/layouts', [StoreController::class, 'uploadLayout'])->name('stores.upload-layout');
     Route::get('key-visuals/next-unique-code', [KeyVisualController::class, 'nextUniqueCode'])->name('key-visuals.next-unique-code');
@@ -135,6 +139,47 @@ Route::middleware([
         });
     });
 
+    // ── Billing ──────────────────────────────────────────────────────────────
+    Route::prefix('billing')->name('billing.')->group(function () {
+        // Periods
+        Route::get('/periods',                           [BillingController::class, 'index'])->name('periods.index');
+        Route::get('/periods/create',                    [BillingController::class, 'create'])->name('periods.create');
+        Route::post('/periods',                          [BillingController::class, 'store'])->name('periods.store');
+        Route::get('/periods/{period}',                  [BillingController::class, 'show'])->name('periods.show');
+        Route::get('/periods/{period}/status',                        [BillingController::class, 'periodStatus'])->name('periods.status');
+        Route::get('/periods/{period}/brand-invoice/{brand}',        [BillingController::class, 'brandInvoiceView'])->name('periods.brand-invoice');
+        Route::post('/periods/{period}/issue-all',                   [BillingController::class, 'issueAllBills'])->name('periods.issue-all');
+        Route::post('/periods/{period}/brands/{brand}/issue-all',    [BillingController::class, 'issueBrandBills'])->name('periods.brand-issue-all');
+        Route::post('/periods/{period}/brands/{brand}/finalize-all', [BillingController::class, 'finalizeBrandBills'])->name('periods.brand-finalize-all');
+        Route::post('/periods/{period}/generate',                    [BillingController::class, 'generate'])->name('periods.generate');
+        Route::post('/periods/{period}/finalize',        [BillingController::class, 'finalizePeriod'])->name('periods.finalize');
+
+        // Bills
+        Route::get('/bills/{bill}',                      [BillingController::class, 'showBill'])->name('bills.show');
+        Route::post('/bills/{bill}/issue',               [BillingController::class, 'issueBill'])->name('bills.issue');
+        Route::post('/bills/{bill}/adjust',              [BillingController::class, 'adjustBill'])->name('bills.adjust');
+        Route::post('/bills/{bill}/finalize',            [BillingController::class, 'finalizeBill'])->name('bills.finalize');
+        Route::post('/bills/{bill}/paid',                [BillingController::class, 'markPaid'])->name('bills.paid');
+        Route::get('/bills/{bill}/invoice',              [BillingController::class, 'invoiceView'])->name('bills.invoice');
+        Route::post('/line-items/{lineItem}/override',   [BillingController::class, 'overrideLineItem'])->name('line-items.override');
+
+        // Disputes (per-bill)
+        Route::get('/disputes',                          [BillDisputeController::class, 'index'])->name('disputes.index');
+        Route::post('/disputes/{bill}',                  [BillDisputeController::class, 'store'])->name('disputes.store');
+        Route::get('/disputes/{dispute}',                [BillDisputeController::class, 'show'])->name('disputes.show');
+        Route::post('/disputes/{dispute}/approve',       [BillDisputeController::class, 'approve'])->name('disputes.approve');
+        Route::post('/disputes/{dispute}/partial',       [BillDisputeController::class, 'partialApprove'])->name('disputes.partial');
+        Route::post('/disputes/{dispute}/reject',        [BillDisputeController::class, 'reject'])->name('disputes.reject');
+
+        // Brand-level disputes
+        Route::post('/periods/{period}/brands/{brand}/brand-dispute',  [BrandBillDisputeController::class, 'store'])->name('brand-disputes.store');
+        Route::get('/brand-disputes/{dispute}',                        [BrandBillDisputeController::class, 'show'])->name('brand-disputes.show');
+        Route::post('/brand-disputes/{dispute}/approve',               [BrandBillDisputeController::class, 'approve'])->name('brand-disputes.approve');
+        Route::post('/brand-disputes/{dispute}/partial',               [BrandBillDisputeController::class, 'partialApprove'])->name('brand-disputes.partial');
+        Route::post('/brand-disputes/{dispute}/reject',                [BrandBillDisputeController::class, 'reject'])->name('brand-disputes.reject');
+    });
+    // ── End Billing ───────────────────────────────────────────────────────────
+
     Route::get('key-visualsx', [KeyVisualController::class, 'old']);
     Route::post('site-settings/theme', [SiteSettingsController::class, 'saveTheme'])->name('site-settings.theme');
 
@@ -149,20 +194,15 @@ Route::middleware([
 
 });
 
-Route::get('/phpinfo', function () {return phpinfo();});
+//Route::get('/phpinfo', function () {return phpinfo();});
 Route::get('/optimize-clear', function () {return \Mainul\CustomHelperFunctions\Helpers\CustomHelper::optimizeClear();});
 
 Route::get('/has-kv', function (){
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    return \Illuminate\Support\Facades\Artisan::output();
 //    \App\Models\Asset::whereNotIn('id', [1,2])
 //        ->update(['has_kv_slot' => 1]);
 //    return \Illuminate\Support\Facades\Hash::make('@');
-    return response()->json([
-        'success'   => true,
-        'message'   => 'Response message goes here.',
-        'data'      => [
-            ['data-index-2' => 'data-index-value-2' ],
-            ['data-index-2' => 'data-index-value-2' ],
-            ['data-index-3' => 'data-index-value-3' ],
-        ],
-    ]);
+//    return \Illuminate\Support\Facades\Hash::make('developer');
+
 });

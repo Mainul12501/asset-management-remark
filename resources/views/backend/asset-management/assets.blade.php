@@ -45,7 +45,7 @@
 
         {{-- ── Table Card ─────────────────────────────────────────────────────── --}}
         <div class="row">
-            <div class="col-sm-12 col-md-11 col-lg-10 col-xl-9 mx-auto">
+            <div class="col-sm-12 col-md-11 mx-auto">
                 <div class="card custom-card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div class="card-title">Asset Management</div>
@@ -59,9 +59,9 @@
                                 <i class="ri-pages-line me-1"></i> Asset Category
                             </a>
                             @allowed('assets.create')
-                            <button type="button" class="btn btn-sm btn-primary btn-wave" id="btn-add-asset">
-                                <i class="ri-add-line me-1"></i> Add Asset
-                            </button>
+                                <button type="button" class="btn btn-sm btn-primary btn-wave" id="btn-add-asset">
+                                    <i class="ri-add-line me-1"></i> Add Asset
+                                </button>
                             @endallowed
                         </div>
                     </div>
@@ -163,15 +163,15 @@
                                     <div class="invalid-feedback" id="error-name"></div>
                                 </div>
 
-{{--                                <div class="col-md-3">--}}
-{{--                                    <label for="minimum_fee" class="form-label">Minimum Charge</label>--}}
-{{--                                    <div class="input-group">--}}
-{{--                                        <span class="input-group-text">৳</span>--}}
-{{--                                        <input type="number" step="0.01" min="0" class="form-control"--}}
-{{--                                            id="minimum_fee" name="minimum_fee" placeholder="0.00">--}}
-{{--                                    </div>--}}
-{{--                                    <div class="invalid-feedback d-block" id="error-minimum_fee"></div>--}}
-{{--                                </div>--}}
+                                <div class="col-md-3 d-none" id="minimumCharge">
+                                    <label for="minimum_fee" class="form-label">Minimum Charge <span class="text-danger" id="minimum-charge-star">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">৳</span>
+                                        <input type="number" step="0.01" min="0" class="form-control"
+                                            id="minimum_fee" name="minimum_fee" placeholder="0.00">
+                                    </div>
+                                    <div class="invalid-feedback d-block" id="error-minimum_fee"></div>
+                                </div>
                             </div>
                         </div>
 
@@ -1129,6 +1129,7 @@
                 'total_self'           => (int) $t->total_self,
                 'has_kv_space'         => (int) $t->has_kv_space,
                 'total_kv_slot'        => (int) $t->total_kv_slot,
+                'is_ground_type_assets'=> (int) $t->is_ground_type_assets,
             ]);
         @endphp
         const assetTypeFlags = {!! json_encode($assetTypeFlagsData) !!};
@@ -1309,6 +1310,14 @@
             const hasKvSpace = typeId && flags.has_kv_space === 1;
             $('#has-kv-slot-wrap').toggleClass('d-none', !hasKvSpace);
             $('#has_kv_slot').prop('checked', hasKvSpace);
+
+            const requireMinCharge = typeId && flags.is_ground_type_assets === 0;
+            $('#minimumCharge').toggleClass('d-none', !requireMinCharge);
+            $('#minimum_fee').prop('required', requireMinCharge);
+            if (!requireMinCharge) {
+                $('#minimum_fee').val('').removeClass('is-invalid');
+                $('#error-minimum_fee').text('');
+            }
         }
 
         // ── Auto-generate asset name ───────────────────────────────────────────
@@ -1515,6 +1524,7 @@
                             total_self: Number(assetType.total_self ?? 0),
                             has_kv_space: Number(assetType.has_kv_space ?? 0),
                             total_kv_slot: Number(assetType.total_kv_slot ?? 0),
+                            is_ground_type_assets: Number(assetType.is_ground_type_assets ?? 0),
                         };
 
                         $('#asset_type_id').val(String(assetType.id)).trigger('change');
@@ -1688,6 +1698,15 @@
 
             const id       = $('#asset_id').val();
             const formData = new FormData(this);
+
+            // Client-side: minimum_fee required when asset type is not ground type
+            const _typeId = $('#asset_type_id').val();
+            const _typeFlags = _typeId ? (assetTypeFlags[_typeId] || {}) : {};
+            if (_typeId && _typeFlags.is_ground_type_assets === 0 && !$('#minimum_fee').val()) {
+                $('#minimum_fee').addClass('is-invalid');
+                $('#error-minimum_fee').text('Minimum charge is required for this asset type.');
+                return;
+            }
 
             ['status', 'has_kv_slot', 'has_self', 'is_common_asset']
                 .forEach(f => formData.set(f, $(`#${f}`).is(':checked') ? 1 : 0));

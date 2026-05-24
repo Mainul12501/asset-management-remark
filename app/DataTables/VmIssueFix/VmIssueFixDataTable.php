@@ -3,6 +3,7 @@
 namespace App\DataTables\VmIssueFix;
 
 use App\Models\VisualMerchandising;
+use App\Services\StatusPermission\StatusPermissionService;
 use Illuminate\Database\Eloquent\Builder;
 use Yajra\DataTables\DataTableAbstract;
 use Yajra\DataTables\Services\DataTable;
@@ -67,8 +68,15 @@ class VmIssueFixDataTable extends DataTable
                 return $html;
             })
             ->addColumn('status_select', function ($row) {
-                if (!($this->permissions['canChangeStatus'] ?? false)) {
+                // build allowed options once per row using StatusPermissionService
+                $allowedSlugs = app(StatusPermissionService::class)
+                    ->allowedStatuses()
+                    ->pluck('slug')
+                    ->flip(); // slug => index for fast lookup
+
+                if (!($this->permissions['canChangeStatus'] ?? false) || $allowedSlugs->isEmpty()) {
                     $labels = [
+                        'pending'    => 'Pending',
                         'planned'    => 'Planned',
                         'assigned'   => 'Assigned',
                         'processing' => 'Processing',
@@ -76,16 +84,26 @@ class VmIssueFixDataTable extends DataTable
                     ];
                     return '<span class="badge bg-secondary-transparent">' . e($labels[$row->issue_fix_status] ?? $row->issue_fix_status) . '</span>';
                 }
-                $options = [
+                // all possible options — filtered to what this user may set
+                $allOptions = [
+                    'pending'    => 'Pending',
                     'planned'    => 'Planned',
                     'assigned'   => 'Assigned',
                     'processing' => 'Processing',
                     'solved'     => 'Solved',
                 ];
+                // keep current status in list even if user can't set it (shows where it currently is)
+                $options = array_filter(
+                    $allOptions,
+                    fn($val) => $allowedSlugs->has($val) || $val === $row->issue_fix_status,
+                    ARRAY_FILTER_USE_KEY
+                );
+
                 $html = '<select class="form-control form-control-sm change-status" data-vm-id="' . $row->id . '" style="min-width:120px">';
                 foreach ($options as $val => $label) {
-                    $selected = $row->issue_fix_status === $val ? ' selected' : '';
-                    $html .= '<option value="' . $val . '"' . $selected . '>' . $label . '</option>';
+                    $selected  = $row->issue_fix_status === $val ? ' selected' : '';
+                    $disabled  = $val === $row->issue_fix_status && !$allowedSlugs->has($val) ? ' disabled' : '';
+                    $html .= '<option value="' . $val . '"' . $selected . $disabled . '>' . $label . '</option>';
                 }
                 $html .= '</select>';
                 return $html;
@@ -96,7 +114,7 @@ class VmIssueFixDataTable extends DataTable
                 if ($perms['canView'] ?? false) {
                     $buttons .= '<a href="" class="btn btn-sm btn-secondary view-vm" data-vm-id="' . $row->id . '" title="View"><i class="ri-eye-line"></i></a>';
                 }
-                if ($perms['canAssignUser'] ?? false) {
+                if (($perms['canAssignUser'] ?? false) && $row->issue_fix_status !== 'solved') {
                     $buttons .= '<a href="" class="btn btn-sm btn-secondary assign-user" data-vm-id="' . $row->id . '" title="Assign"><i class="ri-user-line"></i></a>';
                 }
                 if ($perms['canUploadProof'] ?? false) {

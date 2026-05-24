@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\VisualMerchandising;
 use App\Models\VmIssueFix;
+use App\Services\StatusPermission\StatusPermissionService;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Mainul\CustomHelperFunctions\Helpers\CustomHelper;
@@ -21,10 +22,10 @@ class VmIssueFixController extends Controller
         return view('backend.asset-management.vm-issue-fix', [
             'users'       => User::latest()->get(),
             'permissions' => [
-                'canView'         => allowed([self::class, 'show']),
-                'canAssignUser'   => allowed([self::class, 'assignUser']),
-                'canUploadProof'  => allowed([self::class, 'uploadProof']),
-                'canChangeStatus' => allowed([self::class, 'changeFixStatus']),
+                'canView'         => allowed('vm.fix-issues.show'),
+                'canAssignUser'   => allowed('vm.assign-user'),
+                'canUploadProof'  => allowed('vm.upload-proof'),
+                'canChangeStatus' => allowed('vm.change-fix-status'),
             ],
         ]);
     }
@@ -32,10 +33,10 @@ class VmIssueFixController extends Controller
     public function datatable(VmIssueFixDataTable $dataTable)
     {
         return $dataTable->withPermissions([
-            'canView'         => allowed([self::class, 'show']),
-            'canAssignUser'   => allowed([self::class, 'assignUser']),
-            'canUploadProof'  => allowed([self::class, 'uploadProof']),
-            'canChangeStatus' => allowed([self::class, 'changeFixStatus']),
+            'canView'         => allowed('vm.fix-issues.show'),
+            'canAssignUser'   => allowed('vm.assign-user'),
+            'canUploadProof'  => allowed('vm.upload-proof'),
+            'canChangeStatus' => allowed('vm.change-fix-status'),
         ])->ajax();
     }
 
@@ -117,8 +118,9 @@ class VmIssueFixController extends Controller
                 return response()->json(['message' => 'Vm Issue Not Found', 'success' => false]);
             }
             $vm->update([
-                'assigned_by'   => auth()->id(),
-                'assigned_to'   => $request->assigned_to,
+                'assigned_by'      => auth()->id(),
+                'assigned_to'      => $request->assigned_to,
+                'issue_fix_status' => 'assigned',
             ]);
 
             activity('workflow')
@@ -126,9 +128,9 @@ class VmIssueFixController extends Controller
                 ->causedBy(auth()->user())
                 ->event('vm_issue_assigned')
                 ->withProperties([
-                    'assigned_by' => auth()->id(),
-                    'assigned_to' => (int) $request->assigned_to,
-                    'issue_fix_status' => $vm->issue_fix_status,
+                    'assigned_by'      => auth()->id(),
+                    'assigned_to'      => (int) $request->assigned_to,
+                    'issue_fix_status' => 'assigned',
                 ])
                 ->log('Visual merchandising issue assigned to a user.');
 
@@ -189,6 +191,8 @@ class VmIssueFixController extends Controller
     public function changeFixStatus(Request $request, $vmId)
     {
         try {
+            app(StatusPermissionService::class)->authorize($request->issue_fix_status);
+
             $vm = VisualMerchandising::findOrFail($vmId);
             if (!$vm)
 //            return back()->withErrors('Vm Issue Not Found');

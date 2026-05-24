@@ -364,4 +364,25 @@ class User extends Authenticatable
         return $this->hasMany(UserStoreAssignment::class, 'assigned_by');
     }
 
+    public function representedBrand()
+    {
+        return $this->belongsTo(Brand::class, 'represented_brand_id');
+    }
+
+//    check if super admin
+    public function isAdmin(): bool
+    {
+        return $this->roles()->whereIn('name', ['super-admin', 'system-admin'])->exists();
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->roles()->where('name', 'super-admin')->exists();
+    }
+
+    public function isSystemAdmin(): bool
+    {
+        return $this->roles()->where('name', 'system-admin')->exists();
+    }
+
 }

@@ -194,7 +194,7 @@ Route::middleware([
 
 });
 
-Route::get('/phpinfo', function () {return phpinfo();});
+//Route::get('/phpinfo', function () {return phpinfo();});
 Route::get('/optimize-clear', function () {return \Mainul\CustomHelperFunctions\Helpers\CustomHelper::optimizeClear();});
 
 Route::get('/has-kv', function (){
